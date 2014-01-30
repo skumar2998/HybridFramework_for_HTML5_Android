@@ -7,10 +7,12 @@ import android.view.Menu;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
 
+import com.blogspot.techzealous.hybridframework_for_html5.utils.ConstantsHfh;
 import com.blogspot.techzealous.hybridframework_for_html5.utils.WebViewClientHfh;
 
 public class MainActivity extends Activity {
 
+	private final String LOG = "MainActivity";
 	private LinearLayout linearLayoutMain;
 	private WebView webViewMain;
 	
@@ -35,6 +37,8 @@ public class MainActivity extends Activity {
 				Looper.myLooper().quit();
 			}
 		};
+		
+		webViewMain.loadUrl(ConstantsHfh.PAGE_HOME);
 	}
 	
 	@Override

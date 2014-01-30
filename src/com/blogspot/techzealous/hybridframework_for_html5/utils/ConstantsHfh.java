@@ -7,7 +7,7 @@ public class ConstantsHfh extends Object {
 		super();
 	}
 	
-	public static final String PAGE_HOME = "file:///android_asset/index.html";
+	public static final String PAGE_HOME = "file:///android_asset/wwwroot/index.html";
 	public static final String JAVASCRIPT = "javascript:";
 	
 	/** HFH URI Schema prefix (jn - JavaScript to Native */
