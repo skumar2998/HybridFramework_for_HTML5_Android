@@ -1,10 +1,24 @@
 package com.blogspot.techzealous.hybridframework_for_html5;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
+import android.provider.ContactsContract;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.content.Loader.OnLoadCompleteListener;
 import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.blogspot.techzealous.hybridframework_for_html5.utils.ConstantsHfh;
@@ -15,6 +29,8 @@ public class MainActivity extends Activity {
 	private final String LOG = "MainActivity";
 	private LinearLayout linearLayoutMain;
 	private WebView webViewMain;
+	private Button headerButton;
+	private Button myButton;
 	
 	private WebViewClientHfh mWebViewClient;
 	private Runnable mRunnableStopWorkerWebViewClient;
@@ -26,9 +42,12 @@ public class MainActivity extends Activity {
 		
 		linearLayoutMain = (LinearLayout) findViewById(R.id.LinearLayoutMain);
 		webViewMain = (WebView) findViewById(R.id.webViewMain);
+		headerButton = (Button) findViewById(R.id.button1);
+		webViewMain = (WebView) findViewById(R.id.webViewMain);
+		headerButton = (Button) findViewById(R.id.button1);
 		
 		webViewMain.getSettings().setJavaScriptEnabled(true);
-		mWebViewClient = new WebViewClientHfh(this, linearLayoutMain, webViewMain);
+		mWebViewClient = new WebViewClientHfh(this, this, linearLayoutMain, webViewMain);
 		webViewMain.setWebViewClient(mWebViewClient);
 		
 		//webViewMain.loadUrl("javascript:myFunction()");
@@ -39,6 +58,27 @@ public class MainActivity extends Activity {
 		};
 		
 		webViewMain.loadUrl(ConstantsHfh.PAGE_HOME);
+		
+		myButton = new Button(MainActivity.this);
+		myButton.setText("Home");
+		LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		//ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		myButton.setLayoutParams(params);
+		linearLayoutMain.addView(myButton, 0);
+		myButton.requestLayout();
+		//params = (ViewGroup.MarginLayoutParams) myButton.getLayoutParams();
+		//params.setMargins(50, 50, 0, 0);
+		//myButton.requestLayout();
+		
+		headerButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) myButton.getLayoutParams();
+				params.setMargins(100, 150, 0, 0);
+				myButton.setLayoutParams(params);
+				myButton.requestLayout();
+			}
+		});
+		
 	}
 	
 	@Override
@@ -56,6 +96,49 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		if (requestCode == ConstantsHfh.CONTACTS_CODE && resultCode == Activity.RESULT_OK) {
+			Uri contact = data.getData();
+			//deprecated - Cursor cursor = managedQuery(contact, null, null, null, null);
+			Cursor cursor = getContentResolver().query(contact, null, null, null, null);
+			/*
+			//added in API 11
+			CursorLoader cl = new CursorLoader(this, contact, null, null, null, null);
+			cl.loadInBackground();
+			cl.registerListener(1, new OnLoadCompleteListener<Cursor> () {
+				@Override
+				public void onLoadComplete(Loader<Cursor> arg0, Cursor arg1) {
+					if(arg1.moveToFirst()) {
+						String contactId = arg1.getString(arg1.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
+						
+					}
+				}
+			});
+			*/
+			if (cursor.moveToFirst()) {
+				ArrayList<String> phonesList = new ArrayList<String>();
+				String contactId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
+				//deprecated - Cursor phones = managedQuery(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+				//		null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + contactId, null, null);
+				Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, 
+						null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + contactId, null, null);
+				while (phones.moveToNext()) {
+					String number = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+					phonesList.add(number);
+				}
+				mWebViewClient.getBridgeHelper().onContactSelected(phonesList);
+			}
+		} else if(requestCode == ConstantsHfh.CAMERA_CODE) {
+			if(resultCode == Activity.RESULT_OK) {
+				String path = data.getDataString();
+				mWebViewClient.getBridgeHelper().onCameraPicture(path);
+			}
+		}
 	}
 
 	@Override

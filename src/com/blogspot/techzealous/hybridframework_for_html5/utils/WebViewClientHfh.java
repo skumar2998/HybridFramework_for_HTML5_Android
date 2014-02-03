@@ -1,5 +1,6 @@
 package com.blogspot.techzealous.hybridframework_for_html5.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,10 +19,10 @@ public class WebViewClientHfh extends WebViewClient {
 	private Handler mHandlerWorker;
 	private BridgeHelper mBridgeHelper;
 	
-	public WebViewClientHfh (Context aCtx, LinearLayout aLinearLayoutMain, WebView aWebView) {
+	public WebViewClientHfh (Activity aAct, Context aCtx, LinearLayout aLinearLayoutMain, WebView aWebView) {
 		super();
 		Handler handlerMain = new Handler();
-		mBridgeHelper = new BridgeHelper(aCtx, aLinearLayoutMain, aWebView, handlerMain);
+		mBridgeHelper = new BridgeHelper(aAct, aCtx, aLinearLayoutMain, aWebView, handlerMain);
 	}
 	
 	@Override
@@ -43,6 +44,10 @@ public class WebViewClientHfh extends WebViewClient {
 	
 	public Handler getHandlerWorker() {
 		return mHandlerWorker;
+	}
+	
+	public BridgeHelper getBridgeHelper() {
+		return mBridgeHelper;
 	}
 	
 	public void startThreadWorker() {

@@ -9,6 +9,13 @@ public class ConstantsHfh extends Object {
 	
 	public static final String PAGE_HOME = "file:///android_asset/wwwroot/index.html";
 	public static final String JAVASCRIPT = "javascript:";
+	public static final int CONTACTS_CODE = 1;
+	public static final int CAMERA_CODE = 2;
+	public static final String ORIENTATION_LANDSCAPE = "4";
+	public static final String ORIENTATION_LANDSCAPE_UPSIDEDOWN = "3";
+	public static final String ORIENTATION_PORTRAIT = "1";
+	public static final String ORIENTATION_PORTRAIT_UPSIDEDOWN = "2";
+	public static final String ORIENTATION_UNKNOWN = "0";
 	
 	/** HFH URI Schema prefix (jn - JavaScript to Native */
 	public static final String HFH_SCHEMA_PREFIX = "jn://";
